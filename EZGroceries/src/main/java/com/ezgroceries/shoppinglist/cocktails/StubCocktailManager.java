@@ -36,6 +36,7 @@ public class StubCocktailManager implements CocktailManager{
         blue.addIngredient("Blue Curacao");
         blue.addIngredient("Lime juice");
         blue.addIngredient("Salt");
+        cocktails.add(blue);
     }
 
     @Override

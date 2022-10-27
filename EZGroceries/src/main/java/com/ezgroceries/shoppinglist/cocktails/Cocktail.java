@@ -1,5 +1,6 @@
 package com.ezgroceries.shoppinglist.cocktails;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cocktail {
@@ -9,7 +10,7 @@ public class Cocktail {
     private String glass;
     private String instructions;
     private String image;
-    private List<String> ingredients;
+    private List<String> ingredients = new ArrayList<>();
 
     public String getCocktailId() {
         return cocktailId;
