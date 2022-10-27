@@ -2,30 +2,32 @@ package com.ezgroceries.shoppinglist.cocktails;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Cocktail {
 
-    private String cocktailId;
-    private String name;
+    private UUID cocktailId;
+    private final String name;
     private String glass;
     private String instructions;
     private String image;
     private List<String> ingredients = new ArrayList<>();
 
-    public String getCocktailId() {
+    public Cocktail(String name){
+        this.name=name;
+        this.cocktailId= UUID.randomUUID();
+    }
+
+    public UUID getCocktailId() {
         return cocktailId;
     }
 
-    public void setCocktailId(String cocktailId) {
-        this.cocktailId = cocktailId;
+    public void setCocktailID(String cocktailId){
+        this.cocktailId=UUID.fromString(cocktailId);
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getGlass() {
@@ -57,16 +59,7 @@ public class Cocktail {
     }
 
     public void addIngredient(String newIngredient) {
-        if(!ingredients.contains(newIngredient)){
             ingredients.add(newIngredient);
-        }
     }
 
-    public void removeIngredient(String tobeRemoved){
-        for(String ingredient: ingredients){
-            if(ingredient.equalsIgnoreCase(tobeRemoved)){
-                ingredients.remove(ingredient);
-            }
-        }
-    }
 }

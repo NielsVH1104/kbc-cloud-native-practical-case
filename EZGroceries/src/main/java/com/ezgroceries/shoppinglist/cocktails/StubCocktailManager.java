@@ -14,9 +14,8 @@ public class StubCocktailManager implements CocktailManager{
     public StubCocktailManager(){
         cocktails = new ArrayList<>();
 
-        Cocktail margerita = new Cocktail();
-        margerita.setCocktailId("23b3d85a-3928-41c0-a533-6538a71e17c4");
-        margerita.setName("Margerita");
+        Cocktail margerita = new Cocktail("Margerita");
+        margerita.setCocktailID("23b3d85a-3928-41c0-a533-6538a71e17c4");
         margerita.setGlass("Cocktail glass");
         margerita.setInstructions("Rub the rim of the glass with the lime slice to make the salt stick to it. Take care to moisten..");
         margerita.setImage("https://www.thecocktaildb.com/images/media/drink/wpxpvu1439905379.jpg");
@@ -26,9 +25,8 @@ public class StubCocktailManager implements CocktailManager{
         margerita.addIngredient("Salt");
         cocktails.add(margerita);
 
-        Cocktail blue = new Cocktail();
-        blue.setCocktailId("d615ec78-fe93-467b-8d26-5d26d8eab073");
-        blue.setName("Blue Margerita");
+        Cocktail blue = new Cocktail("Blue Margerita");
+        blue.setCocktailID("d615ec78-fe93-467b-8d26-5d26d8eab073");
         blue.setGlass("Cocktail glass");
         blue.setInstructions("Rub rim of cocktail glass with lime juice. Dip rim in coarse salt..");
         blue.setImage("https://www.thecocktaildb.com/images/media/drink/qtvvyq1439905913.jpg");
