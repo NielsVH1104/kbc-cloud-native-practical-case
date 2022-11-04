@@ -1,6 +1,7 @@
 package com.ezgroceries.shoppinglist.cocktails;
 
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Component
+@Profile("stub")
 public class StubCocktailManager implements CocktailManager{
 
     private final HashMap<String, Cocktail> cocktails;
@@ -39,7 +41,7 @@ public class StubCocktailManager implements CocktailManager{
     }
 
     @Override
-    public List<Cocktail> getAllCocktails() {
+    public List<Cocktail> getAllCocktails(String searchValue) {
         return new ArrayList<>(cocktails.values());
     }
 

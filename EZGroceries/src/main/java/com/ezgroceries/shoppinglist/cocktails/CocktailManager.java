@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface CocktailManager {
 
-    public List<Cocktail> getAllCocktails();
+    public List<Cocktail> getAllCocktails(String searchValue);
     public Cocktail getCocktail(String id);
 }
