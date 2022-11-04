@@ -4,15 +4,16 @@ package com.ezgroceries.shoppinglist.cocktails;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Component
 public class StubCocktailManager implements CocktailManager{
 
-    private final ArrayList<Cocktail> cocktails;
+    private final HashMap<String, Cocktail> cocktails;
 
     public StubCocktailManager(){
-        cocktails = new ArrayList<>();
+        cocktails = new HashMap<>();
 
         Cocktail margerita = new Cocktail("Margerita");
         margerita.setCocktailID("23b3d85a-3928-41c0-a533-6538a71e17c4");
@@ -23,7 +24,7 @@ public class StubCocktailManager implements CocktailManager{
         margerita.addIngredient("Triple sec");
         margerita.addIngredient("Lime juice");
         margerita.addIngredient("Salt");
-        cocktails.add(margerita);
+        cocktails.put(margerita.getCocktailId().toString(),margerita);
 
         Cocktail blue = new Cocktail("Blue Margerita");
         blue.setCocktailID("d615ec78-fe93-467b-8d26-5d26d8eab073");
@@ -34,21 +35,16 @@ public class StubCocktailManager implements CocktailManager{
         blue.addIngredient("Blue Curacao");
         blue.addIngredient("Lime juice");
         blue.addIngredient("Salt");
-        cocktails.add(blue);
+        cocktails.put(blue.getCocktailId().toString(),blue);
     }
 
     @Override
     public List<Cocktail> getAllCocktails() {
-        return cocktails;
+        return new ArrayList<>(cocktails.values());
     }
 
     @Override
     public Cocktail getCocktail(String id) {
-        for(Cocktail cocktail: cocktails){
-            if(cocktail.getCocktailId().equals(id)){
-                return cocktail;
-            }
-        }
-        return null;
+        return cocktails.get(id);
     }
 }

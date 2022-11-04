@@ -1,5 +1,7 @@
 package com.ezgroceries.shoppinglist.list;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
