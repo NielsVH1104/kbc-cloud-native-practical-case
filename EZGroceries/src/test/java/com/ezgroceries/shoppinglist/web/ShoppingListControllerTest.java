@@ -2,8 +2,6 @@ package com.ezgroceries.shoppinglist.web;
 
 import com.ezgroceries.shoppinglist.list.ShoppingList;
 import com.ezgroceries.shoppinglist.list.ShoppingListController;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,11 +9,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ShoppingListController.class)
@@ -24,7 +20,7 @@ public class ShoppingListControllerTest {
     @Autowired private MockMvc mockMvc;
 
     @Test
-    public void PostNewList() throws Exception {
+    public void CreateNewListAndAddCocktail() throws Exception {
 
         //first test that list is empty.
         mockMvc.perform(get("/shopping-lists"))
