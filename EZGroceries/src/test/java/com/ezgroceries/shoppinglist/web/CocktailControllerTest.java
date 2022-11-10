@@ -32,6 +32,7 @@ public class CocktailControllerTest {
     @Test
     public void getAllCocktails() throws Exception{
 
+        given(cocktailManager.getAllCocktails(any(String.class))).willReturn(new StubCocktailManager().getAllCocktails(""));
 
         mockMvc.perform(get("/cocktails?search='Russian'"))
                 .andExpect(status().isOk())
