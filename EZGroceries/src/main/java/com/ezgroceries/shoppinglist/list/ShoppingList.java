@@ -23,6 +23,14 @@ public class ShoppingList {
         return name;
     }
 
+    public void setShoppingListId(UUID shoppingListId) {
+        this.shoppingListId = shoppingListId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<String> getIngredients() {
         return ingredients;
     }

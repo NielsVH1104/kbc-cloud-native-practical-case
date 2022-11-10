@@ -5,6 +5,7 @@ import com.ezgroceries.shoppinglist.cocktails.CocktailEntity;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name="shopping_list")
@@ -12,25 +13,29 @@ public class ShoppingListEntity {
 
     @Id
     @Column(name = "ID")
-    private Long shoppingListId;
+    private UUID shoppingListId;
 
     @Column(name="name")
     private String name;
 
     @ManyToMany(mappedBy = "shoppingLists")
-    private Set<CocktailEntity> coctails;
+    private Set<CocktailEntity> cocktails;
 
-    public ShoppingListEntity(Long shoppingListId, String name) {
-        this.shoppingListId = shoppingListId;
-        this.name = name;
-        coctails = new HashSet<>();
+    public ShoppingListEntity() {
+        cocktails = new HashSet<>();
     }
 
-    public Long getShoppingListId() {
+    public ShoppingListEntity(UUID shoppingListId, String name) {
+        this.shoppingListId = shoppingListId;
+        this.name = name;
+        cocktails = new HashSet<>();
+    }
+
+    public UUID getShoppingListId() {
         return shoppingListId;
     }
 
-    public void setShoppingListId(Long shoppingListId) {
+    public void setShoppingListId(UUID shoppingListId) {
         this.shoppingListId = shoppingListId;
     }
 
@@ -42,15 +47,15 @@ public class ShoppingListEntity {
         this.name = name;
     }
 
-    public Set<CocktailEntity> getCoctails() {
-        return coctails;
+    public Set<CocktailEntity> getCocktails() {
+        return cocktails;
     }
 
-    public void setCoctails(Set<CocktailEntity> coctails) {
-        this.coctails = coctails;
+    public void setCocktails(Set<CocktailEntity> coctails) {
+        this.cocktails = coctails;
     }
 
     public void addCocktail(CocktailEntity cocktail){
-        coctails.add(cocktail);
+        cocktails.add(cocktail);
     }
 }

@@ -6,14 +6,15 @@ import com.ezgroceries.shoppinglist.list.ShoppingListEntity;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
-@Table(name="coctail")
+@Table(name="cocktail")
 public class CocktailEntity {
 
     @Id
     @Column(name = "ID")
-    private Long cocktailId;
+    private UUID cocktailId;
 
     @Column(name="id_drink")
     private String idDrink;
@@ -32,7 +33,11 @@ public class CocktailEntity {
             inverseJoinColumns = @JoinColumn(name = "shopping_list_id"))
     private Set<ShoppingListEntity> shoppingLists;
 
-    public CocktailEntity(Long cocktailId, String idDrink, String name) {
+    public CocktailEntity(){
+        ingredients = new HashSet<>();
+    };
+
+    public CocktailEntity(UUID cocktailId, String idDrink, String name) {
         this.cocktailId = cocktailId;
         this.idDrink = idDrink;
         this.name = name;
@@ -44,11 +49,11 @@ public class CocktailEntity {
         ingredients.add(ingredient);
     }
 
-    public Long getCocktailId() {
+    public UUID getCocktailId() {
         return cocktailId;
     }
 
-    public void setCocktailId(Long cocktailId) {
+    public void setCocktailId(UUID cocktailId) {
         this.cocktailId = cocktailId;
     }
 
