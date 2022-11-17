@@ -37,13 +37,15 @@ public class ShoppingListController {
 
     @PostMapping(value = "/shopping-lists", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity addNewShoppingList(@RequestBody Map<String, String> body) {
-        log.info("addNewShoppingListTriggered.");
+        log.info("addNewShoppingList Triggered.");
 
         String name = body.get("name");
 
         log.info("Name: " + name);
 
         UUID newUuid = shoppingListManager.addNewList(name);
+
+        log.info(newUuid.toString());
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
