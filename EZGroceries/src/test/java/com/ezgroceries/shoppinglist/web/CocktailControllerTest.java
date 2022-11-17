@@ -1,50 +1,39 @@
 package com.ezgroceries.shoppinglist.web;
 
+import com.ezgroceries.shoppinglist.cocktails.Cocktail;
 import com.ezgroceries.shoppinglist.cocktails.CocktailController;
 import com.ezgroceries.shoppinglist.cocktails.CocktailManager;
 import com.ezgroceries.shoppinglist.cocktails.StubCocktailManager;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(CocktailController.class)
-@ActiveProfiles("db")
-@EnableFeignClients
+@ExtendWith(MockitoExtension.class)
 public class CocktailControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @InjectMocks
+    private CocktailController cocktailController;
 
-    @MockBean
+    @Mock
     CocktailManager cocktailManager;
 
     @Test
-    public void getAllCocktails() throws Exception{
-
-
-        mockMvc.perform(get("/cocktails?search='Russian'"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$..cocktailId").isArray())
-                .andExpect(jsonPath("$..cocktailId").isNotEmpty());
+    public void testGetAllCocktails(){
+        given(cocktailManager.getAllCocktails(any())).willReturn(new StubCocktailManager().getAllCocktails("test"));
+        List<Cocktail> cocktails = cocktailController.cocktailList("Russian");
+        assertThat(cocktails).isNotNull();
+        assertThat(cocktails.size()).isEqualTo(2);
     }
 
-    @Test
-    public void getCoctailsWithoutSearch() throws Exception{
-        mockMvc.perform(get("/cocktails"))
-                .andExpect(status().is(400));
-    }
+
 
 
 }

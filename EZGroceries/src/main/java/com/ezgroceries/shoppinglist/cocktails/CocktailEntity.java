@@ -34,6 +34,7 @@ public class CocktailEntity {
 
     public CocktailEntity(){
         ingredients = new HashSet<>();
+        shoppingLists = new HashSet<>();
     };
 
     public CocktailEntity(UUID cocktailId, String idDrink, String name) {

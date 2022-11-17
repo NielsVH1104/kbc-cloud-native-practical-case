@@ -38,7 +38,11 @@ public class ShoppingListService {
 
     public ShoppingList findExistingList(UUID uuid){
         ShoppingListEntity entity = shoppingListRepository.findByShoppingListId(uuid);
-        return entityToShoppingList(entity);
+        if(entity == null){
+            return null;
+        }else{
+            return entityToShoppingList(entity);
+        }
     }
 
     public void addCocktailToList(ShoppingList list, Cocktail cocktail){
