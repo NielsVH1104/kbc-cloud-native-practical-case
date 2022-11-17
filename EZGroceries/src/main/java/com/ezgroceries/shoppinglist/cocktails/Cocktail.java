@@ -62,4 +62,8 @@ public class Cocktail {
             ingredients.add(newIngredient);
     }
 
+    public void setIngredients(List<String> ingredients){
+        this.ingredients = ingredients;
+    }
+
 }

@@ -1,88 +1,115 @@
 package com.ezgroceries.shoppinglist.web;
 
+import com.ezgroceries.shoppinglist.cocktails.Cocktail;
+import com.ezgroceries.shoppinglist.cocktails.CocktailManager;
 import com.ezgroceries.shoppinglist.list.ShoppingList;
 import com.ezgroceries.shoppinglist.list.ShoppingListController;
+import com.ezgroceries.shoppinglist.list.ShoppingListManager;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.*;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.BDDMockito.given;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.doAnswer;
 
-@WebMvcTest(ShoppingListController.class)
+@ExtendWith(MockitoExtension.class)
 public class ShoppingListControllerTest {
 
-    @Autowired private MockMvc mockMvc;
+    @InjectMocks
+    private ShoppingListController shoppingListController;
+
+    @Mock
+    private ShoppingListManager shoppingListManager;
+
+    @Mock
+    private CocktailManager cocktailManager;
+
+    @BeforeAll
+    public static void setup(){
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+    }
+
 
     @Test
-    public void CreateNewListAndAddCocktail() throws Exception {
+    public void CreateNewList() throws Exception {
+        //Add a new Shopping List,
+        given(shoppingListManager.addNewList(any())).willReturn(UUID.randomUUID());
 
-        //first test that list is empty.
-        mockMvc.perform(get("/shopping-lists"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("[]"));
+        String name1 = "Shopping List 1";
+        Map<String, String> shoppingListMap = new HashMap<>();
+        shoppingListMap.put("name",name1);
+        ResponseEntity response = shoppingListController.addNewShoppingList(shoppingListMap);
+        assertThat(response.getStatusCode().equals(201));
+        assertThat(response.getHeaders().getLocation()).isNotNull();
+    }
 
-        //then add a new value.
+    @Test
+    public void testGetShoppingList(){
 
-        ShoppingList newList = new ShoppingList("Jessica's Birthday");
+        String correctUuid = UUID.randomUUID().toString();
+        ShoppingList correctList = new ShoppingList("Test1");
+        correctList.setShoppingListId(UUID.fromString(correctUuid));
+        correctList.addIngredient("Milk");
+        String falseUuid = UUID.randomUUID().toString();
 
-        String json = "{\"name\":\"" + newList.getName() + "\"}";
+        given(shoppingListManager.getShoppingList(correctUuid)).willReturn(correctList);
 
-        MvcResult result = mockMvc.perform( MockMvcRequestBuilders
-                        .post("/shopping-lists")
-                        .characterEncoding("utf-8")
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
+        //test correct,
+        ShoppingList result = shoppingListController.getShoppingList(correctUuid);
+        assertThat(result).isNotNull();
+        assertThat(result.getName().equals(correctList.getName()));
+        assertThat(result.getIngredients()).isNotEmpty();
+        assertThat(result.getIngredients().contains("Milk"));
 
-        String uri = result.getResponse().getHeader("Location");
-        assertThat(uri).isNotNull();
-        assertThat(uri).isNotBlank();
+        //test false
+        result = shoppingListController.getShoppingList(falseUuid);
+        assertThat(result).isNull();
+    }
 
-        //check that the value exists
+    @Test public void testAddCocktail(){
+        String cocktailUUid = UUID.randomUUID().toString();
+        Cocktail testCocktail = new Cocktail("Chocolate milk");
+        testCocktail.setCocktailID(cocktailUUid);
+        testCocktail.addIngredient("Milk");
+        testCocktail.addIngredient("Chocolate");
 
-        mockMvc.perform(get(uri))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.name").value(newList.getName()));
+        String shoppingUuid = UUID.randomUUID().toString();
+        ShoppingList testShoppingList = new ShoppingList("Test");
+        testShoppingList.setShoppingListId(UUID.fromString(shoppingUuid));
 
-        //test adding a cocktail
+        given(cocktailManager.getCocktail(cocktailUUid)).willReturn(testCocktail);
+        given(shoppingListManager.getShoppingList(shoppingUuid)).willReturn(testShoppingList);
+        doAnswer((Answer<Void>) invocation -> {
+            for(String ingredient: testCocktail.getIngredients()){
+                testShoppingList.addIngredient(ingredient);
+            }
+            return null;
+        }).when(shoppingListManager).addCocktailToShoppingList(isA(ShoppingList.class), isA(Cocktail.class));
 
-        String cocktailId = "23b3d85a-3928-41c0-a533-6538a71e17c4";
-        json="{\"cocktailId\":\"" + cocktailId + "\"}";
+        Map<String, String> shoppingListMap = new HashMap<>();
+        shoppingListMap.put("cocktailId",cocktailUUid);
+        ResponseEntity response = shoppingListController.addCocktail(shoppingUuid, shoppingListMap);
 
-        String postUri = uri+"/cocktails";
+        assertThat(response.getStatusCode().equals(200));
 
-        result = mockMvc.perform(MockMvcRequestBuilders
-                    .post(postUri)
-                    .characterEncoding("utf-8")
-                    .content(json)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
+        ShoppingList result = shoppingListController.getShoppingList(shoppingUuid);
 
-
-        String uri2 =  result.getResponse().getHeader("Location");
-        assertThat(uri2).isNotNull();
-        assertThat(uri2).isNotBlank();
-
-        //check to see that the ingredients are added.
-
-        result = mockMvc.perform(get(uri2))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.name").value(newList.getName()))
-                .andExpect(jsonPath("$.ingredients").isArray())
-                .andExpect(jsonPath("$.ingredients").isNotEmpty())
-                .andReturn();
-
+        assertThat(result.getIngredients()).isNotEmpty();
+        assertThat(result.getIngredients()).size().isEqualTo(testCocktail.getIngredients().size());
     }
 }

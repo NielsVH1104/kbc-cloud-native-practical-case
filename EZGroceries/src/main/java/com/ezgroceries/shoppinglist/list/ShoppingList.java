@@ -1,16 +1,12 @@
 package com.ezgroceries.shoppinglist.list;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ShoppingList {
 
     private UUID shoppingListId;
     private String name;
-    private final List<String> ingredients = new ArrayList<>();
+    private final Set<String> ingredients = new HashSet<String>();
 
     public ShoppingList(String name){
         shoppingListId = UUID.randomUUID();
@@ -25,7 +21,15 @@ public class ShoppingList {
         return name;
     }
 
-    public List<String> getIngredients() {
+    public void setShoppingListId(UUID shoppingListId) {
+        this.shoppingListId = shoppingListId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<String> getIngredients() {
         return ingredients;
     }
 
