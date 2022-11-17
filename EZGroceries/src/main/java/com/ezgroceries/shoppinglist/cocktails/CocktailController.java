@@ -22,8 +22,8 @@ public class CocktailController {
     }
 
     @GetMapping(value = "/cocktails")
-    public List<Cocktail> cocktalList(@RequestParam String search) {
-        log.info("cocktalList called with search-parameter: " + search);
+    public List<Cocktail> cocktailList(@RequestParam String search) {
+        log.info("cocktailList called with search-parameter: " + search);
         return cocktailManager.getAllCocktails(search);
     }
 }

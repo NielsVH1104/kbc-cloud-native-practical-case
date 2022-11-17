@@ -3,9 +3,7 @@ package com.ezgroceries.shoppinglist.list;
 import com.ezgroceries.shoppinglist.cocktails.CocktailEntity;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name="shopping_list")
@@ -51,8 +49,8 @@ public class ShoppingListEntity {
         return cocktails;
     }
 
-    public void setCocktails(Set<CocktailEntity> coctails) {
-        this.cocktails = coctails;
+    public void setCocktails(Set<CocktailEntity> cocktails) {
+        this.cocktails = cocktails;
     }
 
     public void addCocktail(CocktailEntity cocktail){

@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -44,8 +42,14 @@ public class ShoppingListService {
     }
 
     public void addCocktailToList(ShoppingList list, Cocktail cocktail){
-        ShoppingListEntity entity = shoppingListRepository.findByShoppingListId(list.getShoppingListId());
-        entity.addCocktail(cocktailRepository.findByCocktailId(cocktail.getCocktailId()));
+        log.info("addCocktailToList triggered. list: " + list.getName() + ", cocktail: " + cocktail.getName());
+        ShoppingListEntity shoppingListEntity = shoppingListRepository.findByShoppingListId(list.getShoppingListId());
+        CocktailEntity cocktailEntity = cocktailRepository.findByCocktailId(cocktail.getCocktailId());
+        shoppingListEntity.addCocktail(cocktailEntity);
+        cocktailEntity.addShoppingList(shoppingListEntity);
+
+        shoppingListRepository.save(shoppingListEntity);
+        cocktailRepository.save(cocktailEntity);
     }
 
     public List<ShoppingList> getAllLists(){

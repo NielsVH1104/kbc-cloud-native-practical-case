@@ -4,9 +4,7 @@ import com.ezgroceries.shoppinglist.converter.StringSetConverter;
 import com.ezgroceries.shoppinglist.list.ShoppingListEntity;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name="cocktail")
@@ -29,8 +27,9 @@ public class CocktailEntity {
     @ManyToMany
     @JoinTable(
             name = "cocktail_shopping_list",
-            joinColumns = @JoinColumn(name = "cocktail_id"),
-            inverseJoinColumns = @JoinColumn(name = "shopping_list_id"))
+            joinColumns = {@JoinColumn(name = "cocktail_id")},
+            inverseJoinColumns = {@JoinColumn(name = "shopping_list_id")}
+    )
     private Set<ShoppingListEntity> shoppingLists;
 
     public CocktailEntity(){
@@ -87,5 +86,9 @@ public class CocktailEntity {
 
     public void setShoppingLists(Set<ShoppingListEntity> shoppingLists) {
         this.shoppingLists = shoppingLists;
+    }
+
+    public void addShoppingList(ShoppingListEntity shoppingListEntity) {
+        shoppingLists.add(shoppingListEntity);
     }
 }
