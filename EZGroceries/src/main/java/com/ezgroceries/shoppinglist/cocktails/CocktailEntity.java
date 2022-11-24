@@ -32,6 +32,15 @@ public class CocktailEntity {
     )
     private Set<ShoppingListEntity> shoppingLists;
 
+    @Column(name="glass")
+    private String glass;
+
+    @Column(name="image")
+    private String image;
+
+    @Column(name="instructions")
+    private String instructions;
+
     public CocktailEntity(){
         ingredients = new HashSet<>();
         shoppingLists = new HashSet<>();
@@ -91,5 +100,29 @@ public class CocktailEntity {
 
     public void addShoppingList(ShoppingListEntity shoppingListEntity) {
         shoppingLists.add(shoppingListEntity);
+    }
+
+    public String getGlass() {
+        return glass;
+    }
+
+    public void setGlass(String glass) {
+        this.glass = glass;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
     }
 }

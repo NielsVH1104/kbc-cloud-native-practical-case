@@ -2,7 +2,6 @@ package com.ezgroceries.shoppinglist.cocktails;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -84,20 +83,19 @@ public class CocktailService {
                     newEntity.addIngredient(resource.getStrIngredient15());
                 }
 
+                newEntity.setGlass(resource.getStrGlass());
+                newEntity.setInstructions(resource.getStrInstructions());
+                newEntity.setImage(resource.getStrDrinkThumb());
+
+
                 cocktailRepository.save(newEntity);
                 //return Cocktail.
 
                 Cocktail cocktail = entityToCocktail(newEntity);
-                cocktail.setInstructions(resource.getStrInstructions());
-                cocktail.setGlass(resource.getStrGlass());
-                cocktail.setImage(resource.getStrDrinkThumb());
                 mergedList.add(cocktail);
             }else{
                 log.info("-- -- entity found in database. Use existing UUID: " + entity.getCocktailId());
                 Cocktail cocktail = entityToCocktail(entity);
-                cocktail.setInstructions(resource.getStrInstructions());
-                cocktail.setGlass(resource.getStrGlass());
-                cocktail.setImage(resource.getStrDrinkThumb());
                 mergedList.add(cocktail);
             }
         }
@@ -114,6 +112,9 @@ public class CocktailService {
         Cocktail cocktail = new Cocktail(entity.getName());
         cocktail.setCocktailID(entity.getCocktailId().toString());
         cocktail.setIngredients(new ArrayList<>(entity.getIngredients()));
+        cocktail.setInstructions(entity.getInstructions());
+        cocktail.setGlass(entity.getGlass());
+        cocktail.setImage(entity.getImage());
         return cocktail;
     }
 
