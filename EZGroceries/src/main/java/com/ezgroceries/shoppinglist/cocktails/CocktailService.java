@@ -2,6 +2,7 @@ package com.ezgroceries.shoppinglist.cocktails;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,11 +14,8 @@ public class CocktailService {
 
     private static final Logger log = LoggerFactory.getLogger(CocktailService.class);
 
-    private final CocktailRepository cocktailRepository;
-
-    public CocktailService(CocktailRepository cocktailRepository) {
-        this.cocktailRepository = cocktailRepository;
-    }
+    @Autowired
+    private CocktailRepository cocktailRepository;
 
     public List<Cocktail> mergeCocktails(List<CocktailDBResponse.DrinkResource> drinkResources){
         log.info("mergeCocktails triggered,");
@@ -103,9 +101,10 @@ public class CocktailService {
     }
 
     public Cocktail findCocktailByID(String ID){
-        log.info("getting cocktail with ID: " + ID);
+        log.info("getting cocktail with ID: {}", ID);
         CocktailEntity entity = cocktailRepository.findByCocktailId(UUID.fromString(ID));
-        return entityToCocktail(entity);
+        if(entity == null) return null;
+        else return entityToCocktail(entity);
     }
 
     private Cocktail entityToCocktail(CocktailEntity entity){

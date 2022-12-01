@@ -15,16 +15,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
-import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doAnswer;
 
 @ExtendWith(MockitoExtension.class)
 public class ShoppingListServiceTest {
@@ -127,10 +122,10 @@ public class ShoppingListServiceTest {
         List<ShoppingList> allLists = shoppingListService.getAllLists();
         assertThat(allLists).isNotNull();
         assertThat(allLists).isNotEmpty();
-        assertThat(shoppingListsAreFunctionalyEqual(testShoppingList, allLists.get(0)));
+        assertThat(shoppingListsAreFunctionallyEqual(testShoppingList, allLists.get(0)));
     }
 
-    public static boolean shoppingListsAreFunctionalyEqual(ShoppingList list1, ShoppingList list2){
+    public static boolean shoppingListsAreFunctionallyEqual(ShoppingList list1, ShoppingList list2){
         boolean equal = true;
 
         if(!list1.getName().equals(list2.getName())) equal = false;
