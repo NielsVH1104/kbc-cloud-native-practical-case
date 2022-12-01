@@ -152,7 +152,7 @@ public class ShoppingListControllerTest {
     }
 
     @Test
-    public void TestGetSHoppingLists(){
+    public void TestGetShoppingLists(){
         String shoppingUuid = UUID.randomUUID().toString();
         ShoppingList testShoppingList = new ShoppingList("Test");
         testShoppingList.setShoppingListId(UUID.fromString(shoppingUuid));

@@ -24,6 +24,7 @@ public class ShoppingListEntity {
     private Set<MealEntity> meals;
 
     public ShoppingListEntity() {
+        meals = new HashSet<>();
         cocktails = new HashSet<>();
     }
 

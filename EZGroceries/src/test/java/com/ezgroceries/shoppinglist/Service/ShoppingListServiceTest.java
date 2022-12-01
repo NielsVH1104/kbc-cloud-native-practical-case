@@ -7,6 +7,9 @@ import com.ezgroceries.shoppinglist.list.ShoppingList;
 import com.ezgroceries.shoppinglist.list.ShoppingListEntity;
 import com.ezgroceries.shoppinglist.list.ShoppingListRepository;
 import com.ezgroceries.shoppinglist.list.ShoppingListService;
+import com.ezgroceries.shoppinglist.meals.Meal;
+import com.ezgroceries.shoppinglist.meals.MealEntity;
+import com.ezgroceries.shoppinglist.meals.MealRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,12 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doAnswer;
@@ -36,6 +37,9 @@ public class ShoppingListServiceTest {
 
     @Mock
     private ShoppingListRepository shoppingListRepository;
+
+    @Mock
+    private MealRepository mealRepository;
 
 
     @Test
@@ -69,7 +73,7 @@ public class ShoppingListServiceTest {
     }
 
     @Test
-    public void testAddCocktailToList(){
+    public void testAddCocktailAndMealToList(){
         UUID cocktailUUid = UUID.randomUUID();
         Cocktail testCocktail = new Cocktail("Chocolate milk");
         testCocktail.setCocktailID(cocktailUUid.toString());
@@ -82,26 +86,56 @@ public class ShoppingListServiceTest {
         testCocktailEntity.setName(testCocktail.getName());
         testCocktailEntity.setIngredients(new HashSet<>(testCocktail.getIngredients()));
 
+        UUID mealUuid = UUID.randomUUID();
+        Meal testMeal = new Meal("Cheese omelette");
+        testMeal.addIngredient("cheese");
+        testMeal.addIngredient("eggs");
+        testMeal.setUuid(mealUuid);
+
+        MealEntity testMealEntity = new MealEntity();
+        testMealEntity.setMealId(mealUuid);
+        testMealEntity.setIdMeal("1");
+        testMealEntity.setIngredients(new HashSet<>(testMeal.getIngredients()));
+
 
         UUID shoppingUuid = UUID.randomUUID();
         ShoppingList testShoppingList = new ShoppingList("Test");
         testShoppingList.setShoppingListId(UUID.fromString(shoppingUuid.toString()));
 
-        ShoppingListEntity testShoppingListEnity = new ShoppingListEntity();
-        testShoppingListEnity.setName(testShoppingList.getName());
-        testShoppingListEnity.setShoppingListId(shoppingUuid);
+        ShoppingListEntity testShoppingListEntity = new ShoppingListEntity();
+        testShoppingListEntity.setName(testShoppingList.getName());
+        testShoppingListEntity.setShoppingListId(shoppingUuid);
 
         given(cocktailRepository.findByCocktailId(cocktailUUid)).willReturn(testCocktailEntity);
-        given(shoppingListRepository.findByShoppingListId(shoppingUuid)).willReturn(testShoppingListEnity);
+        given(mealRepository.findByMealId(mealUuid)).willReturn(testMealEntity);
+        given(shoppingListRepository.findByShoppingListId(shoppingUuid)).willReturn(testShoppingListEntity);
 
-        Map<String, String> shoppingListMap = new HashMap<>();
-        shoppingListMap.put("cocktailId",cocktailUUid.toString());
         shoppingListService.addCocktailToList(testShoppingList, testCocktail);
+        shoppingListService.addMealToList(testShoppingList, testMeal);
 
         ShoppingList result = shoppingListService.findExistingList(shoppingUuid);
 
         assertThat(result).isNotNull();
         assertThat(result.getIngredients().containsAll(testCocktail.getIngredients()));
+        assertThat(result.getIngredients().containsAll(testMeal.getIngredients()));
 
+
+        ArrayList<ShoppingListEntity> testLists = new ArrayList<>();
+        testLists.add(testShoppingListEntity);
+        given(shoppingListRepository.findAll()).willReturn(testLists);
+
+        List<ShoppingList> allLists = shoppingListService.getAllLists();
+        assertThat(allLists).isNotNull();
+        assertThat(allLists).isNotEmpty();
+        assertThat(shoppingListsAreFunctionalyEqual(testShoppingList, allLists.get(0)));
+    }
+
+    public static boolean shoppingListsAreFunctionalyEqual(ShoppingList list1, ShoppingList list2){
+        boolean equal = true;
+
+        if(!list1.getName().equals(list2.getName())) equal = false;
+        else if(!list1.getShoppingListId().equals(list2.getShoppingListId())) equal = false;
+
+        return equal;
     }
 }
