@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @Import(AppConfig.class)
-@ComponentScan("com.ezgroceries.shoppinglist")
+@ComponentScan("com.ezgroceries")
 @EnableFeignClients
 public class EZGroceriesShoppingListApplication {
 
