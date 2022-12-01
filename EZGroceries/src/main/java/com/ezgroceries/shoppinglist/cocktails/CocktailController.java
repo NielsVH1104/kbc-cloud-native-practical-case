@@ -14,12 +14,8 @@ public class CocktailController {
 
     private static final Logger log = LoggerFactory.getLogger(CocktailController.class);
 
-    private final CocktailManager cocktailManager;
-
     @Autowired
-    public CocktailController(CocktailManager cocktailManager){
-        this.cocktailManager=cocktailManager;
-    }
+    private CocktailManager cocktailManager;
 
     @GetMapping(value = "/cocktails")
     public List<Cocktail> cocktailList(@RequestParam String search) {

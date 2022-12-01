@@ -1,6 +1,7 @@
 package com.ezgroceries.shoppinglist.list;
 
 import com.ezgroceries.shoppinglist.cocktails.Cocktail;
+import com.ezgroceries.shoppinglist.meals.Meal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,5 +45,10 @@ public class DatabaseShoppingListManager implements ShoppingListManager{
     @Override
     public void addCocktailToShoppingList(ShoppingList list, Cocktail cocktail){
         shoppingListService.addCocktailToList(list, cocktail);
+    }
+
+    @Override
+    public void addMealToShoppingList(ShoppingList shoppingList, Meal meal) {
+        shoppingListService.addMealToList(shoppingList, meal);
     }
 }

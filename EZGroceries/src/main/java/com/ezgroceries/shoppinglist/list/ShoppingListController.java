@@ -2,6 +2,8 @@ package com.ezgroceries.shoppinglist.list;
 
 import com.ezgroceries.shoppinglist.cocktails.Cocktail;
 import com.ezgroceries.shoppinglist.cocktails.CocktailManager;
+import com.ezgroceries.shoppinglist.meals.Meal;
+import com.ezgroceries.shoppinglist.meals.MealManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +21,13 @@ import java.util.UUID;
 public class ShoppingListController {
 
     private static final Logger log = LoggerFactory.getLogger(ShoppingListController.class);
-
-    private final ShoppingListManager shoppingListManager;
-
-    private final CocktailManager cocktailManager;
-
     @Autowired
-    public ShoppingListController(ShoppingListManager shoppingListManager, CocktailManager cocktailManager) {
-        this.shoppingListManager=shoppingListManager;
-        this.cocktailManager=cocktailManager;
-    }
+    private ShoppingListManager shoppingListManager;
+    @Autowired
+    private CocktailManager cocktailManager;
+    @Autowired
+    private MealManager mealManager;
+
 
     @GetMapping(value = "/shopping-lists")
     public List<ShoppingList> getAllShoppingLists() {
@@ -85,8 +84,32 @@ public class ShoppingListController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
 
+    @PostMapping(value="/shopping-lists/{shoppingListId}/meals", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity addMeal(@PathVariable("shoppingListId") String shoppingListId,
+                                      @RequestBody Map<String, String> body)
+    {
+        log.info("starts adding meal.");
 
+        String mealId = body.get("mealId");
+        log.info("MealId: {}", mealId);
+        log.info("shoppingListId: {}", shoppingListId);
+
+        ShoppingList shoppingList = shoppingListManager.getShoppingList(shoppingListId);
+        Meal meal = mealManager.getMeal(mealId);
+
+        log.info("Meal: {}", meal.getName());
+
+        shoppingListManager.addMealToShoppingList(shoppingList, meal);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/shopping-lists/{resourceId}")
+                .buildAndExpand(shoppingListId)
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
 

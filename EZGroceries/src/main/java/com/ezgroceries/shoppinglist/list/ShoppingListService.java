@@ -3,8 +3,12 @@ package com.ezgroceries.shoppinglist.list;
 import com.ezgroceries.shoppinglist.cocktails.Cocktail;
 import com.ezgroceries.shoppinglist.cocktails.CocktailEntity;
 import com.ezgroceries.shoppinglist.cocktails.CocktailRepository;
+import com.ezgroceries.shoppinglist.meals.Meal;
+import com.ezgroceries.shoppinglist.meals.MealEntity;
+import com.ezgroceries.shoppinglist.meals.MealRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,19 +19,16 @@ import java.util.UUID;
 public class ShoppingListService {
 
     private static final Logger log = LoggerFactory.getLogger(ShoppingListService.class);
+    @Autowired
+    private ShoppingListRepository shoppingListRepository;
+    @Autowired
+    private CocktailRepository cocktailRepository;
+    @Autowired
+    private MealRepository mealRepository;
 
-    private final ShoppingListRepository shoppingListRepository;
-
-    private final CocktailRepository cocktailRepository;
-
-
-    public ShoppingListService(ShoppingListRepository shoppingListRepository, CocktailRepository cocktailRepository) {
-        this.shoppingListRepository = shoppingListRepository;
-        this.cocktailRepository = cocktailRepository;
-    }
 
     public ShoppingList createNew(String name) {
-        log.info("createNew triggered with name " + name);
+        log.info("createNew triggered with name {}", name);
         ShoppingList shoppingList = new ShoppingList(name);
         ShoppingListEntity entity = new ShoppingListEntity(shoppingList.getShoppingListId(), shoppingList.getName());
 
@@ -46,7 +47,7 @@ public class ShoppingListService {
     }
 
     public void addCocktailToList(ShoppingList list, Cocktail cocktail){
-        log.info("addCocktailToList triggered. list: " + list.getName() + ", cocktail: " + cocktail.getName());
+        log.info("addCocktailToList triggered. list: {}, cocktail: {}", list.getName(), cocktail.getName());
         ShoppingListEntity shoppingListEntity = shoppingListRepository.findByShoppingListId(list.getShoppingListId());
         CocktailEntity cocktailEntity = cocktailRepository.findByCocktailId(cocktail.getCocktailId());
         shoppingListEntity.addCocktail(cocktailEntity);
@@ -54,6 +55,17 @@ public class ShoppingListService {
 
         shoppingListRepository.save(shoppingListEntity);
         cocktailRepository.save(cocktailEntity);
+    }
+
+    public void addMealToList(ShoppingList list, Meal meal) {
+        log.info("addMealToList triggered. list: {}, cocktail: {}", list.getName(), meal.getName());
+        ShoppingListEntity shoppingListEntity = shoppingListRepository.findByShoppingListId(list.getShoppingListId());
+        MealEntity mealEntity = mealRepository.findByMealId(meal.getUuid());
+        shoppingListEntity.addMeal(mealEntity);
+        mealEntity.addShoppingList(shoppingListEntity);
+
+        shoppingListRepository.save(shoppingListEntity);
+        mealRepository.save(mealEntity);
     }
 
     public List<ShoppingList> getAllLists(){
@@ -75,6 +87,13 @@ public class ShoppingListService {
             }
         }
 
+        for(MealEntity meal: entity.getMeals()){
+            for(String ingredient: meal.getIngredients()){
+                list.addIngredient(ingredient);
+            }
+        }
+
         return list;
     }
+
 }

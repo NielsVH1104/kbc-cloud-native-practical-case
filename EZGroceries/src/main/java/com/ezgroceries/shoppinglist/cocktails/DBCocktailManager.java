@@ -12,9 +12,11 @@ import java.util.List;
 @Profile("db")
 public class DBCocktailManager implements CocktailManager{
 
-    @Autowired private CocktailDBClient cocktailDBClient;
+    @Autowired
+    private CocktailDBClient cocktailDBClient;
 
-    @Autowired private CocktailService cocktailService;
+    @Autowired
+    private CocktailService cocktailService;
 
     @Override
     public List<Cocktail> getAllCocktails(String searchValue) {
@@ -25,6 +27,6 @@ public class DBCocktailManager implements CocktailManager{
 
     @Override
     public Cocktail getCocktail(String id) {
-        return cocktailService.findCocktailbyID(id);
+        return cocktailService.findCocktailByID(id);
     }
 }

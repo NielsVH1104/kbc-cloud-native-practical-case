@@ -1,7 +1,8 @@
-package com.ezgroceries.shoppinglist.cocktails;
+package com.ezgroceries.shoppinglist.meals;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,31 +10,30 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class CocktailService {
+public class MealService {
 
-    private static final Logger log = LoggerFactory.getLogger(CocktailService.class);
+    private static final Logger log = LoggerFactory.getLogger(MealService.class);
 
-    private final CocktailRepository cocktailRepository;
+    @Autowired
+    private MealRepository mealRepository;
 
-    public CocktailService(CocktailRepository cocktailRepository) {
-        this.cocktailRepository = cocktailRepository;
-    }
-
-    public List<Cocktail> mergeCocktails(List<CocktailDBResponse.DrinkResource> drinkResources){
-        log.info("mergeCocktails triggered,");
-        ArrayList<Cocktail> mergedList = new ArrayList<>();
-
-        for(CocktailDBResponse.DrinkResource resource: drinkResources){
-            log.info("--> {}", resource.getStrDrink());
-            CocktailEntity entity = cocktailRepository.findByIdDrink(resource.getIdDrink());
-            if(entity == null){
+    public List<Meal> mergeMeals(MealDBResponse mealDBResponse) {
+        log.info("mergeMeals triggered");
+        ArrayList<Meal> mergedMeals = new ArrayList<>();
+        for(MealDBResponse.MealResource resource: mealDBResponse.getMeals()){
+            log.info("--> {}", resource.getStrMeal());
+            MealEntity entity = mealRepository.findByIdMeal(resource.getIdMeal());
+            if(entity==null){
                 log.info("-- -- entity does not exist yet. make a new one and persist it.");
                 UUID newUUId = UUID.randomUUID();
-                CocktailEntity newEntity = new CocktailEntity();
+                MealEntity newEntity = new MealEntity();
                 log.info("-- -- {}", newUUId);
-                newEntity.setCocktailId(newUUId);
-                newEntity.setName(resource.getStrDrink());
-                newEntity.setIdDrink(resource.getIdDrink());
+                newEntity.setMealId(newUUId);
+                newEntity.setIdMeal(resource.getIdMeal());
+                newEntity.setName(resource.getStrMeal());
+                newEntity.setInstructions(resource.getStrInstructions());
+                newEntity.setImage(resource.getStrMealThumb());
+                newEntity.setCategory(resource.getStrCategory());
                 if(resource.getStrIngredient1() != null){
                     newEntity.addIngredient(resource.getStrIngredient1());
                 }
@@ -83,39 +83,34 @@ public class CocktailService {
                     newEntity.addIngredient(resource.getStrIngredient15());
                 }
 
-                newEntity.setGlass(resource.getStrGlass());
-                newEntity.setInstructions(resource.getStrInstructions());
-                newEntity.setImage(resource.getStrDrinkThumb());
-
-
-                cocktailRepository.save(newEntity);
-                //return Cocktail.
-
-                Cocktail cocktail = entityToCocktail(newEntity);
-                mergedList.add(cocktail);
+                mealRepository.save(newEntity);
+                Meal meal = entityToMeal(newEntity);
+                mergedMeals.add(meal);
             }else{
-                log.info("-- -- entity found in database. Use existing UUID: " + entity.getCocktailId());
-                Cocktail cocktail = entityToCocktail(entity);
-                mergedList.add(cocktail);
+                log.info("-- -- entity found in database. Use existing UUID: {}", entity.getMealId());
+                Meal meal = entityToMeal(entity);
+                mergedMeals.add(meal);
             }
+
         }
-        return mergedList;
+
+
+        return mergedMeals;
     }
 
-    public Cocktail findCocktailByID(String ID){
-        log.info("getting cocktail with ID: " + ID);
-        CocktailEntity entity = cocktailRepository.findByCocktailId(UUID.fromString(ID));
-        return entityToCocktail(entity);
+    public Meal findMealById(String ID) {
+        log.info("getting meal with ID {}", ID);
+        MealEntity entity = mealRepository.findByMealId(UUID.fromString(ID));
+        return entityToMeal(entity);
     }
 
-    private Cocktail entityToCocktail(CocktailEntity entity){
-        Cocktail cocktail = new Cocktail(entity.getName());
-        cocktail.setCocktailID(entity.getCocktailId().toString());
-        cocktail.setIngredients(new ArrayList<>(entity.getIngredients()));
-        cocktail.setInstructions(entity.getInstructions());
-        cocktail.setGlass(entity.getGlass());
-        cocktail.setImage(entity.getImage());
-        return cocktail;
+    private Meal entityToMeal(MealEntity entity){
+        Meal meal = new Meal(entity.getName());
+        meal.setImage(entity.getImage());
+        meal.setCategory(entity.getCategory());
+        meal.setInstructions(entity.getInstructions());
+        meal.setUuid(entity.getMealId());
+        meal.setIngredients(new ArrayList<>(entity.getIngredients()));
+        return meal;
     }
-
 }
