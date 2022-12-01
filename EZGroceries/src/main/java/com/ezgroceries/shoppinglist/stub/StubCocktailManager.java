@@ -1,4 +1,6 @@
-package com.ezgroceries.shoppinglist.cocktails;
+package com.ezgroceries.shoppinglist.stub;
+import com.ezgroceries.shoppinglist.cocktails.Cocktail;
+import com.ezgroceries.shoppinglist.cocktails.CocktailManager;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -7,7 +9,7 @@ import java.util.List;
 
 @Component
 @Profile("stub")
-public class StubCocktailManager implements CocktailManager{
+public class StubCocktailManager implements CocktailManager {
 
     public StubCocktailManager(){
 

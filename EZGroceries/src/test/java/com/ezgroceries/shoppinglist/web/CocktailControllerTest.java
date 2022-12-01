@@ -3,7 +3,7 @@ package com.ezgroceries.shoppinglist.web;
 import com.ezgroceries.shoppinglist.cocktails.Cocktail;
 import com.ezgroceries.shoppinglist.cocktails.CocktailController;
 import com.ezgroceries.shoppinglist.cocktails.CocktailManager;
-import com.ezgroceries.shoppinglist.cocktails.StubCocktailManager;
+import com.ezgroceries.shoppinglist.stub.StubCocktailManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

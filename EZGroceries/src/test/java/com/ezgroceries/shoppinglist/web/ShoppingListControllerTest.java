@@ -5,6 +5,8 @@ import com.ezgroceries.shoppinglist.cocktails.CocktailManager;
 import com.ezgroceries.shoppinglist.list.ShoppingList;
 import com.ezgroceries.shoppinglist.list.ShoppingListController;
 import com.ezgroceries.shoppinglist.list.ShoppingListManager;
+import com.ezgroceries.shoppinglist.meals.Meal;
+import com.ezgroceries.shoppinglist.meals.MealManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +39,9 @@ public class ShoppingListControllerTest {
 
     @Mock
     private CocktailManager cocktailManager;
+
+    @Mock
+    private MealManager mealManager;
 
     @BeforeAll
     public static void setup(){
@@ -112,4 +117,57 @@ public class ShoppingListControllerTest {
         assertThat(result.getIngredients()).isNotEmpty();
         assertThat(result.getIngredients()).size().isEqualTo(testCocktail.getIngredients().size());
     }
+    @Test
+    public void TestAddMeal(){
+        String mealUuid = String.valueOf(UUID.randomUUID());
+        Meal testMeal = new Meal("Cheese omelette");
+        testMeal.addIngredient("cheese");
+        testMeal.addIngredient("eggs");
+        testMeal.setUuid(UUID.fromString(mealUuid));
+
+        String shoppingUuid = UUID.randomUUID().toString();
+        ShoppingList testShoppingList = new ShoppingList("Test");
+        testShoppingList.setShoppingListId(UUID.fromString(shoppingUuid));
+
+        given(mealManager.getMeal(mealUuid)).willReturn(testMeal);
+        given(shoppingListManager.getShoppingList(shoppingUuid)).willReturn(testShoppingList);
+        doAnswer((Answer<Void>) invocation -> {
+            for(String ingredient: testMeal.getIngredients()){
+                testShoppingList.addIngredient(ingredient);
+            }
+            return null;
+        }).when(shoppingListManager).addMealToShoppingList(isA(ShoppingList.class), isA(Meal.class));
+
+        Map<String, String> shoppingListMap = new HashMap<>();
+        shoppingListMap.put("mealId",mealUuid);
+        ResponseEntity response = shoppingListController.addMeal(shoppingUuid, shoppingListMap);
+
+        assertThat(response.getStatusCode().equals(200));
+
+        ShoppingList result = shoppingListController.getShoppingList(shoppingUuid);
+
+        assertThat(result.getIngredients()).isNotEmpty();
+        assertThat(result.getIngredients()).size().isEqualTo(testMeal.getIngredients().size());
+
+    }
+
+    @Test
+    public void TestGetSHoppingLists(){
+        String shoppingUuid = UUID.randomUUID().toString();
+        ShoppingList testShoppingList = new ShoppingList("Test");
+        testShoppingList.setShoppingListId(UUID.fromString(shoppingUuid));
+
+        ArrayList<ShoppingList> testLists = new ArrayList<>();
+        testLists.add(testShoppingList);
+
+        given(shoppingListManager.getAllShoppingLists()).willReturn(testLists);
+
+        List<ShoppingList> allLists = shoppingListController.getAllShoppingLists();
+
+        assertThat(allLists).isNotNull();
+        assertThat(allLists).isNotEmpty();
+        assertThat(allLists.size()).isEqualTo(testLists.size());
+        assertThat(allLists.get(0)).isEqualTo(testShoppingList);
+    }
+
 }

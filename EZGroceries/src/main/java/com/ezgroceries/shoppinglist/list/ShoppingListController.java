@@ -112,5 +112,4 @@ public class ShoppingListController {
         return ResponseEntity.created(location).build();
     }
 
-
 }
