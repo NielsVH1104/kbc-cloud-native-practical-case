@@ -1,9 +1,7 @@
 package com.ezgroceries.shoppinglist.Service;
 
 import com.ezgroceries.shoppinglist.cocktails.*;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,10 +26,8 @@ public class CocktailServiceTest {
 
     private UUID cocktailUUid;
     private Cocktail testCocktail;
-    private CocktailEntity testCocktailEntity;
     private UUID cocktailUuid2;
     private Cocktail testCocktail2;
-    private CocktailEntity testCocktailEntity2;
 
     private CocktailDBResponse.DrinkResource resource1;
     private CocktailDBResponse.DrinkResource resource2;
@@ -43,7 +39,7 @@ public class CocktailServiceTest {
         testCocktail.addIngredient("Milk");
         testCocktail.addIngredient("Chocolate");
 
-        testCocktailEntity = new CocktailEntity();
+        CocktailEntity testCocktailEntity = new CocktailEntity();
         testCocktailEntity.setCocktailId(cocktailUUid);
         testCocktailEntity.setIdDrink("1");
         testCocktailEntity.setName(testCocktail.getName());
@@ -65,7 +61,7 @@ public class CocktailServiceTest {
         testCocktail2.addIngredient("Sugar");
         testCocktail2.addIngredient("Lemon juice");
 
-        testCocktailEntity2 = new CocktailEntity();
+        CocktailEntity testCocktailEntity2 = new CocktailEntity();
         testCocktailEntity2.setCocktailId(cocktailUuid2);
         testCocktailEntity2.setIdDrink("2");
         testCocktailEntity2.setName(testCocktail2.getName());
@@ -96,7 +92,7 @@ public class CocktailServiceTest {
         Cocktail foundCocktail = cocktailService.findCocktailByID(cocktailUUid.toString());
 
         assertThat(foundCocktail).isNotNull();
-        assertThat(areCocktailsEqual(foundCocktail, testCocktail));
+        assertThat(areCocktailsEqual(foundCocktail, testCocktail)).isTrue();
 
         //test when a different cocktail is returned
         Cocktail differentCocktail = cocktailService.findCocktailByID(cocktailUuid2.toString());
@@ -109,15 +105,13 @@ public class CocktailServiceTest {
         ArrayList<CocktailDBResponse.DrinkResource> resources = new ArrayList<>();
         resources.add(resource1);
         resources.add(resource2);
-        CocktailDBResponse response = new CocktailDBResponse();
-        response.setDrinks(resources);
 
         List<Cocktail> mergedCocktails = cocktailService.mergeCocktails(resources);
 
         assertThat(mergedCocktails).isNotNull();
         assertThat(mergedCocktails).isNotEmpty();
-        assertThat(areCocktailsEqual(mergedCocktails.get(0),testCocktail));
-        assertThat(areCocktailsEqual(mergedCocktails.get(1),testCocktail2));
+        assertThat(areCocktailsEqual(mergedCocktails.get(0),testCocktail)).isTrue();
+        assertThat(areCocktailsEqual(mergedCocktails.get(1),testCocktail2)).isTrue();
 
         //test merge when one is not found
         given(cocktailRepository.findByIdDrink("2")).willReturn(null);
@@ -126,8 +120,8 @@ public class CocktailServiceTest {
 
         assertThat(mergedCocktails).isNotNull();
         assertThat(mergedCocktails).isNotEmpty();
-        assertThat(areCocktailsEqual(mergedCocktails.get(0),testCocktail));
-        assertThat(areCocktailsEqual(mergedCocktails.get(1),testCocktail2));
+        assertThat(areCocktailsEqual(mergedCocktails.get(0),testCocktail)).isTrue();
+        assertThat(areCocktailsEqual(mergedCocktails.get(1),testCocktail2)).isFalse();
 
     }
 

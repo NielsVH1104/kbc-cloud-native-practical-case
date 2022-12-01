@@ -42,7 +42,7 @@ public class ShoppingListServiceTest {
         String name = "Test1";
         ShoppingList shoppingList = shoppingListService.createNew(name);
         assertThat(shoppingList).isNotNull();
-        assertThat(shoppingList.getName().equals(name));
+        assertThat(shoppingList.getName().equals(name)).isTrue();
     }
 
     @Test
@@ -58,8 +58,8 @@ public class ShoppingListServiceTest {
         //test correct
         ShoppingList result = shoppingListService.findExistingList(correctUuid);
         assertThat(result).isNotNull();
-        assertThat(result.getName().equals(testShoppingListEntity.getName()));
-        assertThat(result.getShoppingListId().equals(testShoppingListEntity.getShoppingListId()));
+        assertThat(result.getName().equals(testShoppingListEntity.getName())).isTrue();
+        assertThat(result.getShoppingListId().equals(testShoppingListEntity.getShoppingListId())).isTrue();
 
         //test false
         result = shoppingListService.findExistingList(falseUuid);
@@ -111,8 +111,8 @@ public class ShoppingListServiceTest {
         ShoppingList result = shoppingListService.findExistingList(shoppingUuid);
 
         assertThat(result).isNotNull();
-        assertThat(result.getIngredients().containsAll(testCocktail.getIngredients()));
-        assertThat(result.getIngredients().containsAll(testMeal.getIngredients()));
+        assertThat(result.getIngredients().containsAll(testCocktail.getIngredients())).isTrue();
+        assertThat(result.getIngredients().containsAll(testMeal.getIngredients())).isTrue();
 
 
         ArrayList<ShoppingListEntity> testLists = new ArrayList<>();
@@ -122,7 +122,7 @@ public class ShoppingListServiceTest {
         List<ShoppingList> allLists = shoppingListService.getAllLists();
         assertThat(allLists).isNotNull();
         assertThat(allLists).isNotEmpty();
-        assertThat(shoppingListsAreFunctionallyEqual(testShoppingList, allLists.get(0)));
+        assertThat(shoppingListsAreFunctionallyEqual(testShoppingList, allLists.get(0))).isTrue();
     }
 
     public static boolean shoppingListsAreFunctionallyEqual(ShoppingList list1, ShoppingList list2){

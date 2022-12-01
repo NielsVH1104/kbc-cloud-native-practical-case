@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -51,7 +52,7 @@ public class ShoppingListControllerTest {
 
 
     @Test
-    public void CreateNewList() throws Exception {
+    public void CreateNewList() {
         //Add a new Shopping List,
         given(shoppingListManager.addNewList(any())).willReturn(UUID.randomUUID());
 
@@ -59,7 +60,7 @@ public class ShoppingListControllerTest {
         Map<String, String> shoppingListMap = new HashMap<>();
         shoppingListMap.put("name",name1);
         ResponseEntity response = shoppingListController.addNewShoppingList(shoppingListMap);
-        assertThat(response.getStatusCode().equals(201));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getLocation()).isNotNull();
     }
 
@@ -77,9 +78,9 @@ public class ShoppingListControllerTest {
         //test correct,
         ShoppingList result = shoppingListController.getShoppingList(correctUuid);
         assertThat(result).isNotNull();
-        assertThat(result.getName().equals(correctList.getName()));
+        assertThat(result.getName().equals(correctList.getName())).isTrue();
         assertThat(result.getIngredients()).isNotEmpty();
-        assertThat(result.getIngredients().contains("Milk"));
+        assertThat(result.getIngredients().contains("Milk")).isTrue();
 
         //test false
         result = shoppingListController.getShoppingList(falseUuid);
@@ -110,7 +111,7 @@ public class ShoppingListControllerTest {
         shoppingListMap.put("cocktailId",cocktailUUid);
         ResponseEntity response = shoppingListController.addCocktail(shoppingUuid, shoppingListMap);
 
-        assertThat(response.getStatusCode().equals(200));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
         ShoppingList result = shoppingListController.getShoppingList(shoppingUuid);
 
@@ -142,10 +143,9 @@ public class ShoppingListControllerTest {
         shoppingListMap.put("mealId",mealUuid);
         ResponseEntity response = shoppingListController.addMeal(shoppingUuid, shoppingListMap);
 
-        assertThat(response.getStatusCode().equals(200));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
         ShoppingList result = shoppingListController.getShoppingList(shoppingUuid);
-
         assertThat(result.getIngredients()).isNotEmpty();
         assertThat(result.getIngredients()).size().isEqualTo(testMeal.getIngredients().size());
 
