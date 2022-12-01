@@ -2,6 +2,7 @@ package com.ezgroceries.shoppinglist.cocktails;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +24,8 @@ public interface CocktailDBClient {
 
         private static final Logger log = LoggerFactory.getLogger(CocktailDBClientFallback.class);
 
-        private final CocktailRepository cocktailRepository;
-
-        public CocktailDBClientFallback(CocktailRepository cocktailRepository) {
-            this.cocktailRepository = cocktailRepository;
-        }
+        @Autowired
+        private CocktailRepository cocktailRepository;
 
         @Override
         public CocktailDBResponse searchCocktails(String search) {
